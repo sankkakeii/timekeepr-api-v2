@@ -7,19 +7,19 @@ const {PORT, DB_URL} = process.env
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
 
+const corsOptions ={
+    origin:'*',
+    credentials:false,
+    optionSuccessStatus:200
+}
+
 // const corsOptions ={
-//     // origin:'http://localhost:3000',
-//     origin:'*',
-//     // credentials:true,
-//     credentials:false,
+//     origin:'http://localhost:3134',
+//     credentials:true,
 //     optionSuccessStatus:200
 // }
 
-const corsOptions ={
-    origin:'http://localhost:3000',
-    credentials:true,
-    optionSuccessStatus:200
-}
+
 // installing packages
 const app = express()
 

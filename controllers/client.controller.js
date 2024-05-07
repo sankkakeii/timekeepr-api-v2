@@ -110,10 +110,11 @@ const newClient = {
   addLocationMod: async (req, res) => {
     try {
       const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+      const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
+
       console.log(token)
       console.log('-----------------------')
       console.log(payload)
-      const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
 
       // Check if a location record with the same companyId already exists
       const existingLocation = await Location.findOne({ companyId: payload.id });

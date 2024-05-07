@@ -56,6 +56,8 @@ const newClient = {
 
       const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
 
+      console.log(payload)
+
       // Check if user with the same email already exists
       const existingUser = await User.findOne({ email: req.body.email });
       if (existingUser) {

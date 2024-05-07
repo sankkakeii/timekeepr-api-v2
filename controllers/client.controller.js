@@ -39,7 +39,7 @@ const newClient = {
       const passOk = bcrypt.compareSync(password, clientInfo.password);
       if (passOk) {
         const token = jwt.sign({ id: clientInfo._id, email }, process.env.JWTPRIVATEKEY);
-        res.cookie("token", token, { httpOnly: false });
+        // res.cookie("token", token, { httpOnly: false });
         res.json({ auth: true, token: token, data: clientInfo });
       } else {
         res.sendStatus(401);

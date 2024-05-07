@@ -55,7 +55,7 @@ const userController = {
       const passOk = bcrypt.compareSync(password, userInfo.password);
       if (passOk) {
         const token = jwt.sign({ id: userInfo._id, email }, process.env.JWTPRIVATEKEY, { expiresIn: '1h' });
-        res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development', sameSite: 'lax' });
+        // res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development', sameSite: 'lax' });
         res.json({ auth: true, token: token, data: userInfo });
       } if (!passOk) {
         return res.status(401).send('Incorrect password');

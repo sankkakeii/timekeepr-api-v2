@@ -7,11 +7,27 @@ const {PORT, DB_URL} = process.env
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
 
-const corsOptions ={
-    origin:'*',
-    credentials:false,
-    optionSuccessStatus:200
-}
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Check if the origin is allowed
+    const allowedOrigins = ['*', 'http://localhost:3134', 'http://localhost:3000']; // Add more origins as needed
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: false,
+  optionSuccessStatus: 200
+};
+
+
+//const corsOptions ={
+//    origin:'*',
+//  credentials:false,
+//    optionSuccessStatus:200
+//}
 
 // const corsOptions ={
 //     origin:'http://localhost:3134',

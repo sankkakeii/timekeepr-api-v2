@@ -95,7 +95,12 @@ const userController = {
       });
 
       if (todaysStatus && todaysStatus.clockedIn) {
-        return res.status(200).json({ message: "User has already clocked in today" });
+        return res.status(200).json({ 
+          message: "User has already clocked in today", 
+          data: {
+            todaysStatus
+          }
+         });
       }
 
       const locationId = await Location.where({ locationId: new mongoose.Types.ObjectId(companyId) }).find();
@@ -133,7 +138,12 @@ const userController = {
         await currentUser.save();
       }
 
-      return res.json({ message: message });
+      return res.json({ 
+        message: message, 
+        data: {
+          statusUpdate
+        } 
+      });
 
     } catch (err) {
       console.error(err);

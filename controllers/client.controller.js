@@ -61,7 +61,7 @@ const newClient = {
       // Check if user with the same email already exists
       const existingUser = await User.findOne({ email: req.body.email });
       if (existingUser) {
-        // res.json({message:'User with the same email already exists' });
+        res.json({message:'User with the same email already exists' });
         throw new Error('User with the same email already exists');
       }
 
@@ -78,8 +78,8 @@ const newClient = {
       });
 
       await user.save();
-       res.sendStatus(201);
-      // res.json({message:'User Added Successfully' })
+      res.sendStatus(201);
+      res.json({message:'User Added Successfully' })
     } catch (err) {
       res.status(400).send(err.message);
     }

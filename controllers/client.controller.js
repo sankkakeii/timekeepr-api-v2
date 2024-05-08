@@ -78,8 +78,8 @@ const newClient = {
       });
 
       await user.save();
-      // res.sendStatus(201);
-      res.json({message:'User Added Successfully' })
+       res.sendStatus(201);
+      // res.json({message:'User Added Successfully' })
     } catch (err) {
       res.status(400).send(err.message);
     }

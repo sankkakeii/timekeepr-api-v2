@@ -141,7 +141,12 @@ const userController = {
       return res.json({ 
         message: message, 
         data: {
-          statusUpdate
+          statusUpdate: {
+            date: currentDate,
+            clockedIn: true,
+            clockedOut: false,
+            timestamps: [timestampUpdate]
+          }
         } 
       });
 

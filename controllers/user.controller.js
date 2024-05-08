@@ -126,6 +126,7 @@ const userController = {
         let statusUpdate = {
           date: currentDate,
           clockedIn: true,
+          clockedOut: false,
           timestamps: [timestampUpdate]
         };
         currentUser.userStatus.push(statusUpdate);

@@ -245,6 +245,7 @@ const userController = {
       }
 
       todaysStatus.clockedOut = true;
+      todaysStatus.clockedIn = false;
       await currentUser.save();
       return res.json({ message: "User clocked out successfully." });
 

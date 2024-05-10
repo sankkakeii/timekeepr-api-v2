@@ -240,9 +240,9 @@ const userController = {
         return res.status(200).json({ message: "No clock-in entry for today. Cannot clock out." });
       }
 
-      if (todaysStatus.clockedOut) {
-        return res.status(200).json({ message: "User has already clocked out today." });
-      }
+      // if (todaysStatus.clockedOut) {
+      //  return res.status(200).json({ message: "User has already clocked out today." });
+      // }
 
       todaysStatus.clockedOut = true;
       todaysStatus.clockedIn = false;

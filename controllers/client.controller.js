@@ -1,5 +1,6 @@
 const { Client } = require("../models/client.scheme");
 const { Location } = require("../models/location.scheme");
+const { Clockindata } = require("../models/clockin.scheme");
 const { User } = require("../models/user.scheme");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");

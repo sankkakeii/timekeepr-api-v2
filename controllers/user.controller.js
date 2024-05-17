@@ -27,9 +27,9 @@ function isWithinRadius(userLocation, companyLocation, radius) {
   var a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(toRad(lat1)) *
-    Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var distanceInKm = R * c;
 
@@ -44,21 +44,24 @@ const userController = {
     const { email, password } = req.body;
     try {
       const userInfo = await User.findOne({ email });
-      console.log(email)
+      console.log(email);
 
       if (!userInfo) {
-        return res.status(401).send('No user found with this email');
+        return res.status(401).send("No user found with this email");
       }
-
-
 
       const passOk = bcrypt.compareSync(password, userInfo.password);
       if (passOk) {
-        const token = jwt.sign({ id: userInfo._id, email }, process.env.JWTPRIVATEKEY, { expiresIn: '1h' });
+        const token = jwt.sign(
+          { id: userInfo._id, email },
+          process.env.JWTPRIVATEKEY,
+          { expiresIn: "1h" }
+        );
         // res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development', sameSite: 'lax' });
         res.json({ auth: true, token: token, data: userInfo });
-      } if (!passOk) {
-        return res.status(401).send('Incorrect password');
+      }
+      if (!passOk) {
+        return res.status(401).send("Incorrect password");
       }
     } catch (err) {
       res.status(500).send(err.message);
@@ -67,7 +70,8 @@ const userController = {
 
   clockIn: async (req, res) => {
     try {
-      const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+      const token =
+        req.headers.authorization && req.headers.authorization.split(" ")[1];
       const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
       const companyId = payload.id;
 
@@ -87,23 +91,27 @@ const userController = {
       let currentDate = new Date();
 
       // Check if there's an entry for today in userStatus
-      const todaysStatus = currentUser.userStatus.find(status => {
+      const todaysStatus = currentUser.userStatus.find((status) => {
         const statusDate = new Date(status.date);
-        return statusDate.getDate() == currentDate.getDate() &&
+        return (
+          statusDate.getDate() == currentDate.getDate() &&
           statusDate.getMonth() == currentDate.getMonth() &&
-          statusDate.getFullYear() == currentDate.getFullYear();
+          statusDate.getFullYear() == currentDate.getFullYear()
+        );
       });
 
       if (todaysStatus && todaysStatus.clockedIn) {
-        return res.status(200).json({ 
-          message: "User has already clocked in today", 
+        return res.status(200).json({
+          message: "User has already clocked in today",
           data: {
-            todaysStatus
-          }
-         });
+            todaysStatus,
+          },
+        });
       }
 
-      const locationId = await Location.where({ locationId: new mongoose.Types.ObjectId(companyId) }).find();
+      const locationId = await Location.where({
+        locationId: new mongoose.Types.ObjectId(companyId),
+      }).find();
       let location = locationId[0].organizationLocation;
       let radius = locationId[0].radius;
       let orgClockInTimeString = locationId[0].clockInTime;
@@ -117,10 +125,12 @@ const userController = {
       let orgClockInTime = new Date();
       orgClockInTime.setHours(orgHours, orgMinutes, 0, 0);
       let isOnTime = currentDate <= orgClockInTime;
-      let message = isOnTime ? "User clocked in successfully on time" : "User clocked in late";
+      let message = isOnTime
+        ? "User clocked in successfully on time"
+        : "User clocked in late";
 
       let timestampUpdate = {
-        clockInTime: currentDate
+        clockInTime: currentDate,
       };
 
       if (todaysStatus) {
@@ -132,44 +142,41 @@ const userController = {
           date: currentDate,
           clockedIn: true,
           clockedOut: false,
-          timestamps: [timestampUpdate]
+          timestamps: [timestampUpdate],
         };
         currentUser.userStatus.push(statusUpdate);
         await currentUser.save();
       }
 
-      return res.json({ 
-        message: message, 
+      return res.json({
+        message: message,
         data: {
           statusUpdate: {
             date: currentDate,
             clockedIn: true,
             clockedOut: false,
-            timestamps: [timestampUpdate]
-          }
-        } 
+            timestamps: [timestampUpdate],
+          },
+        },
       });
-
     } catch (err) {
       console.error(err);
-      if (err.name === 'JsonWebTokenError') {
-        return res.status(401).send('Invalid Token');
+      if (err.name === "JsonWebTokenError") {
+        return res.status(401).send("Invalid Token");
       } else {
         return res.status(500).send(err.message);
       }
     }
   },
 
-
-
   getCurrentUser: async (req, res) => {
     try {
-      const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+      const token =
+        req.headers.authorization && req.headers.authorization.split(" ")[1];
       const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
 
-
       const user = await User.findById(payload.id);
-      console.log(payload.id)
+      console.log(payload.id);
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -184,25 +191,25 @@ const userController = {
   // FETCH ORGNANIZATION CLOCK INFO
   getOrganizationClock: async (req, res) => {
     try {
-      const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+      const token =
+        req.headers.authorization && req.headers.authorization.split(" ")[1];
       const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
       const companyId = payload.id;
 
-      const locationId = await Location.where({ locationId: new mongoose.Types.ObjectId(companyId) }).find();
+      const locationId = await Location.where({
+        locationId: new mongoose.Types.ObjectId(companyId),
+      }).find();
 
       // add your success response here
-      res.send({ clockInTime: locationId[0].clockInTime })
-
+      res.send({ clockInTime: locationId[0].clockInTime });
     } catch (err) {
       res.status(500).send(err.message);
     }
   },
 
-
   // RESET PASSWORD
   resetPassword: async (req, res) => {
-    this.getCurrentUser()
-
+    this.getCurrentUser();
   },
 
   analytics: async (req, res) => {
@@ -215,7 +222,8 @@ const userController = {
 
   clockOut: async (req, res) => {
     try {
-      const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+      const token =
+        req.headers.authorization && req.headers.authorization.split(" ")[1];
       const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
       let userEmail = req.body.email;
 
@@ -229,15 +237,19 @@ const userController = {
       let currentDate = new Date();
 
       // Check if there's an entry for today in userStatus
-      const todaysStatus = currentUser.userStatus.find(status => {
+      const todaysStatus = currentUser.userStatus.find((status) => {
         const statusDate = new Date(status.date);
-        return statusDate.getDate() == currentDate.getDate() &&
+        return (
+          statusDate.getDate() == currentDate.getDate() &&
           statusDate.getMonth() == currentDate.getMonth() &&
-          statusDate.getFullYear() == currentDate.getFullYear();
+          statusDate.getFullYear() == currentDate.getFullYear()
+        );
       });
 
       if (!todaysStatus) {
-        return res.status(200).json({ message: "No clock-in entry for today. Cannot clock out." });
+        return res
+          .status(200)
+          .json({ message: "No clock-in entry for today. Cannot clock out." });
       }
 
       // if (todaysStatus.clockedOut) {
@@ -248,28 +260,51 @@ const userController = {
       todaysStatus.clockedIn = false;
       await currentUser.save();
       return res.json({ message: "User clocked out successfully." });
-
     } catch (err) {
       console.error(err);
-      if (err.name === 'JsonWebTokenError') {
-        return res.status(401).send('Invalid Token');
+      if (err.name === "JsonWebTokenError") {
+        return res.status(401).send("Invalid Token");
       } else {
         return res.status(500).send(err.message);
       }
     }
   },
 
+  getUserClockInData: async (req, res) => {
+    try {
+      const token =
+        req.headers.authorization && req.headers.authorization.split(" ")[1];
+      const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
+      let userEmail = req.body.email;
+
+      // Fetch the current user
+      let currentUser = await Clockindata.findOne({ email: userEmail });
+
+      if (!currentUser) {
+        return res.status(400).json({ message: "User not found." });
+      }
+
+      // Return the user's clock-in data
+      return res.json({ userStatus: currentUser.userStatus });
+    } catch (err) {
+      console.error(err);
+      if (err.name === "JsonWebTokenError") {
+        return res.status(401).send("Invalid Token");
+      } else {
+        return res.status(500).send(err.message);
+      }
+    }
+  },
 
   logOut: async (req, res) => {
     try {
-      res.clearCookie('token');
+      res.clearCookie("token");
       return res.json({ message: "Logged out successfully." });
     } catch (err) {
       console.error(err);
       return res.status(500).send(err.message);
     }
-  }
-
+  },
 };
 
 module.exports = userController;

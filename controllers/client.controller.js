@@ -161,7 +161,43 @@ const newClient = {
     } catch (err) {
       res.status(500).send(err.message);
     }
-  }
+  },
+
+  getCompanyClockInData: async (req, res) => {
+    try {
+      // Extract token and decode
+      const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+      const payload = jwt.verify(token, process.env.JWTPRIVATEKEY);
+  
+      // Find all users that belong to the same company
+      const users = await User.find({ companyId: payload.id });
+  
+      if (!users.length) {
+        return res.status(404).json({ message: "No users found for this company." });
+      }
+  
+      // Extract emails of the users
+      const userEmails = users.map(user => user.email);
+  
+      // Fetch the clock-in data for all users in the company
+      const clockInData = await Clockindata.find({ email: { $in: userEmails } });
+  
+      if (!clockInData.length) {
+        return res.status(404).json({ message: "No clock-in data found for this company." });
+      }
+  
+      // Return the clock-in data
+      return res.json({ clockInData });
+    } catch (err) {
+      console.error(err);
+      if (err.name === 'JsonWebTokenError') {
+        return res.status(401).send('Invalid Token');
+      } else {
+        return res.status(500).send(err.message);
+      }
+    }
+  },
+  
 
 
 };

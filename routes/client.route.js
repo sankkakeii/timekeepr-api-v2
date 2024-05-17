@@ -34,6 +34,8 @@ router.post('/add-user', clientMiddleware.verifyToken, clientController.addUser)
 router.post('/add-location', clientMiddleware.verifyToken, clientController.addLocation);
 router.post('/add-location-mod', clientMiddleware.verifyToken, clientController.addLocationMod);
 
+router.get('/get-clock-in-data', clientController.getCompanyClockInData);
+
 router.get('/view-users', clientController.viewUsers);
 // router.get('/analytics', clientController.viewAnalytics);
 // router.get('/notifications', clientController.notifications);
